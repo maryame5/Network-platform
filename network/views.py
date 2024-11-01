@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
@@ -12,10 +13,16 @@ from .models import *
 
 def index(request):
     post=Post.objects.all()
+    paginator = Paginator(post, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     posts=post.order_by('-timestamp')
     return render(request, "network/index.html",{
+        'page_obj': page_obj,
+        'page_number':page_number,
+        "posts":posts,})
 
-                  "posts":posts,})
+
 @login_required
 def following(request):
     user = request.user

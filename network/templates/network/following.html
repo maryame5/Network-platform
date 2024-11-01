@@ -1,0 +1,22 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+   <h1>following</h1>
+   
+    <div id ="post_user">
+        <p>{{following_users}}</p>
+        <p>{{posts}}</p>
+
+        {% for post in posts %}
+        <div id="post">
+            <h4>{{post.user }}</h4>
+            <p>{{post.content}}</p>
+            <p>{{post.timestamp}}</p>
+            <p>likes :{{post.like}}</p>
+        </div>
+        {% empty %}
+              <p>No posts to display.</p>
+
+        {%endfor%}
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div id="create_post">
+        <h2>Create a new post</h2>
+        <form action="{%url 'create_post' %}" method="post">
+            {% csrf_token %}
+           
+            <label for="content">Content:</label>
+            <textarea id="content" name="content" required></textarea>
+            <br>
+            <input type="submit" value="Create Post">
+
+        </form>
+    </div>
+    <div id="all_post">
+        <h3>ALL POSTS</h3>
+        {%for post in posts%}
+        <div id="post">
+            <a href="{%url 'profil' post.user %}" >{{post.user}} </a>
+            <p>{{post.content}}</p>
+            <p>{{post.timestamp}}</p>
+            <p>likes :{{post.like}}</p>
+        </div>
+        {%endfor%}
+    </div>
+{% endblock %}

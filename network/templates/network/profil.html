@@ -1,0 +1,32 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+   <h1>Profil</h1>
+    <div id="profil1">
+       <p>{{user.username}}</p>
+       <p>Following :{{following_nbr}}</p>
+       <p>followers : {{follower_nbr}}</p>
+       {% if others != userr %}
+       <div>
+        
+        <form action="{% url 'follow' userr %}" method="post">
+            {% csrf_token %}
+           
+            <button type="submit" class="btn btn-outline-danger">follow</button>
+            </form>
+       </div>
+       {% endif %}
+    </div>
+    <div id ="post_user">
+        {% for post in posts %}
+
+
+        <div id="post">
+            <h4>{{post.user }}</h4>
+            <p>{{post.content}}</p>
+            <p>{{post.timestamp}}</p>
+            <p>likes :{{post.like}}</p>
+        </div>
+        {%endfor%}
+    </div>
+{% endblock %}

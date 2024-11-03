@@ -1,10 +1,12 @@
 
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
 from .models import *
@@ -12,15 +14,18 @@ from .models import *
 
 
 def index(request):
-    post=Post.objects.all()
+    user= request.user
+    p=Post.objects.all()
+    post = p.order_by("-timestamp").all()
     paginator = Paginator(post, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    posts=post.order_by('-timestamp')
+   
     return render(request, "network/index.html",{
+        'user':user,
         'page_obj': page_obj,
         'page_number':page_number,
-        "posts":posts,})
+        "posts":post,})
 
 
 @login_required
@@ -31,16 +36,21 @@ def following(request):
     following_users = [f.following for f in foll] 
      #get the posts of the people they are following
 
-    posts=[]
+    post=[]
     for i in following_users:
        
-        post=Post.objects.filter(user=i)
-        posts.extend(post)
+        array=Post.objects.filter(user=i)
+        post.extend(array)
 
+    paginator = Paginator(post, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     return render(request, "network/following.html",{
-            "posts": posts ,
-            "following_users":following_users})
+            "posts": post ,
+             'page_obj': page_obj,
+             'page_number':page_number,
+             "following_users":following_users})
 
     
 
@@ -97,19 +107,27 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+@login_required
 def create_post(request):
     if request.method == "POST":
-        user = request.user
-        content = request.POST["content"]
-        post = Post.objects.create(user=user, content=content)
-        post.save()
+        try:
+            data = json.loads(request.body)  # Load the JSON data
+            userr = data.get("user")
+            user= User.objects.get(username=userr) 
+            content = data.get("content")
+            if not content :
+                return HttpResponse({"error":"content are required"} ,status=400)
+            post = Post.objects.create(user=user, content=content)
+            post.save()
+        except json.JSONDecodeError:
+            return  JsonResponse({"error": "Invalid JSON."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
         
-        return HttpResponseRedirect(reverse("index"))
+    return JsonResponse({"message": "post published successfully."}, status=201)
     
 
-def profil(request,name):
-    
-  
+def profil(request,name):  
      #normal user connect to network
      users= request.user
      foll= follow.objects.filter(follower=users)
@@ -120,16 +138,22 @@ def profil(request,name):
      #get the user who's creating this post
      userr = User.objects.get(username=name)
      #get tho posts of the one creating
-     posts = Post.objects.filter(user=userr)
+     post = Post.objects.filter(user=userr)
+     paginator = Paginator(post, 10)
+     page_number = request.GET.get('page')
+     page_obj = paginator.get_page(page_number)
+     
     
          
        
      return render(request, "network/profil.html",{
-         "posts":posts,
+         "posts":post,
          "others":users,
          "userr":userr,
          "following_nbr":following_nbr,
-         "follower_nbr":follower_nbr
+         "follower_nbr":follower_nbr,
+          'page_obj': page_obj,
+         'page_number':page_number,
 
                   
                   })
@@ -140,15 +164,9 @@ def follow_fun(request,following_name)   :
     if request.method == "POST":
             #user connected
             user=request.user
-        
-            
             following_user = User.objects.get(username=following_name)
             post_fo= Post.objects.filter(user=following_user).order_by('-id').first()
-           
-        
             #get the the creator of the post
-            
-            
                  #create relation between the user and the posts he wanna start following
             try :
                 follow.objects.get(follower=user, following=following_user)
@@ -156,11 +174,12 @@ def follow_fun(request,following_name)   :
             except follow.DoesNotExist:
 
                  follow.objects.create(follower=user, following=following_user,post_fo=post_fo)
-
+                 return JsonResponse({"message": "You are now following " + following_name})
             
-            
+def edit_post(request,post_id):
+    post = Post.objects.get(id=post_id)
+    older_content=post.content
+    if request.method == "POST":
+        post.content = request.POST['content']
+        post.save()
     
-    
-          
-            return HttpResponseRedirect(reverse("index"))        
-            

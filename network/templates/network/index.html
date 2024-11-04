@@ -10,10 +10,11 @@
             <label for="content">Content:</label>
             <textarea id="post_content" name="content" placeholder="share what you want with your friends" required></textarea>
             <br>
-            <input id = "create" type="submit" value="Create Post">
+            <input id = "create" type="submit" value="Create Post" >
 
         </form>
     </div>
+    
     <div id="page"><h2>paginator</h2>
         {% for post in page_obj %}
         {# Each "post" is a Post model object. #}
@@ -21,14 +22,26 @@
             <a href="{%url 'profil' post.user %}" >{{post.user}} </a>
             <p>{{post.content}}</p>
             <p>{{post.timestamp}}</p>
-            <p>likes :{{post.like}}</p>
+            <p><button id="like">{{post.like}}</button></p>
             {% if user == post.user %}
-             <button>edit</button>
+             <button class="edit" data-post-id="{{post.id}}" >edit</button>
+             <div id="edit_post"  style="display: none;">
+              <h2>edit post</h2>
+              <form class="form_post" method="post">
+                {% csrf_token %}
+                
+                  <input id ="post_user" name ="user" value="{{ request.user }}" hidden>
+                  <label for="content">Content:</label>
+                  <textarea id="post_content" name="content" placeholder="share what you want with your friends" required></textarea>
+                  <br>
+                  <input id = "update" type="submit" value="edit post" >
+        
+              </form>
+          </div>
             {% endif %}
         </div>
     {% endfor %}
-    
-    
+        
 
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-end">
@@ -39,9 +52,6 @@
             {% else %}
             <li class="page-item disabled"><span class="page-link " aria-disabled="true">Previous</span></li>
             {% endif %}
-          
-          
-
           <li class="page-item active"><a class="page-link" href="?page={{page_obj}}">{{page_number}}</a></li>
           {% if page_obj.has_next %}
           <li class="page-item"><a class="page-link" href="?page=3">{{page_obj.next_page_number  }}</a></li>

@@ -14,6 +14,7 @@ from .models import *
 
 
 def index(request):
+    print("load ")
     user= request.user
     p=Post.objects.all()
     post = p.order_by("-timestamp").all()
@@ -106,7 +107,7 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
-
+@csrf_exempt
 @login_required
 def create_post(request):
     if request.method == "POST":
@@ -122,10 +123,33 @@ def create_post(request):
         except json.JSONDecodeError:
             return  JsonResponse({"error": "Invalid JSON."}, status=400)
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": "error"+str(e)}, status=500)
         
     return JsonResponse({"message": "post published successfully."}, status=201)
-    
+
+@csrf_exempt
+@login_required
+def edit(request,postId):
+    post=Post.objects.get(id=postId)
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)  # Load the JSON data
+            
+            content = data.get("content")
+            if not content :
+                return HttpResponse({"error":"content are required"} ,status=400)
+            post = Post.objects.update( content=content)
+            post.save()
+        except json.JSONDecodeError:
+            return  JsonResponse({"error": "Invalid JSON."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": "error"+str(e)}, status=500)
+        
+    return JsonResponse({"message": "post edited successfully."}, status=201)
+
+
+
+
 
 def profil(request,name):  
      #normal user connect to network
@@ -176,10 +200,4 @@ def follow_fun(request,following_name)   :
                  follow.objects.create(follower=user, following=following_user,post_fo=post_fo)
                  return JsonResponse({"message": "You are now following " + following_name})
             
-def edit_post(request,post_id):
-    post = Post.objects.get(id=post_id)
-    older_content=post.content
-    if request.method == "POST":
-        post.content = request.POST['content']
-        post.save()
-    
+

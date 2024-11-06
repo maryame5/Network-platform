@@ -21,11 +21,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 up_like(postId);
 
         })})
-    
-    
-
-    
-
    
 });
 
@@ -53,10 +48,6 @@ function create() {
             return response.json();})
         .then(post => {
             console.log("post publish",post); 
-          
-            
-            
-        
         })
         .catch(error => {
             console.error("There was a problem with the fetch operation:", error);
@@ -100,7 +91,6 @@ function edit(postId) {
         .catch(error => 
             console.error("There was a problem with the fetch operation:", error)
           )
-          
         }
 
 function up_like(postId){

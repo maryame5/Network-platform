@@ -212,7 +212,6 @@ def get_post(request,postId):
         })
     except Post.DoesNotExist:
         return JsonResponse({'error': 'Post not found'}, status=404)
-
 @csrf_exempt
 @login_required
 def up_like(request,postId):
@@ -220,7 +219,6 @@ def up_like(request,postId):
         posts=Post.objects.get(id=postId)
         user = request.user
         like_list = posts.liked_by.all()
-    
         if user in like_list:
             posts.liked_by.remove(user)
             posts.like = posts.liked_by.count()

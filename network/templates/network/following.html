@@ -15,8 +15,7 @@
             <p>{{post.content}}</p>
             <p>{{post.timestamp}}</p>
             <p>   Like :
-              <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>
-            
+              <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>  
         </div>
          {% endfor %}
 
@@ -29,8 +28,6 @@
                 {% else %}
                 <li class="page-item disabled"><span class="page-link " aria-disabled="true">Previous</span></li>
                 {% endif %}
-              
-              
     
               <li class="page-item active"><a class="page-link" href="?page={{page_obj}}">{{page_number}}</a></li>
               {% if page_obj.has_next %}

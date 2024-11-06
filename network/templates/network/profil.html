@@ -1,6 +1,5 @@
 {% extends "network/layout.html" %}
 {% load static %}
-
 {% block body %}
    <h1>Profil</h1>
     <div id="profil1">
@@ -9,7 +8,6 @@
        <p>followers : {{follower_nbr}}</p>
        {% if others != userr %}
        <div>
-        
         <form action="{% url 'follow' userr %}" method="post">
             {% csrf_token %}
            

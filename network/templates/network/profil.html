@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
    <h1>Profil</h1>
@@ -29,6 +30,17 @@
             <p>likes :{{post.like}}</p>
             {% if others == userr %}
             <button> edit</button>
+            <div id="edit_post"  style="display: none;">
+              <h2>edit post</h2>
+              <form class="form_edit" method="post">
+                {% csrf_token %}               
+                  <label for="content">Content:</label>
+                  <textarea id="content" name="content" required></textarea>
+                  <br>
+                  <input id ="update" type="submit" value="update" >
+        
+              </form>
+          </div>
             {% endif %}
         </div>
          {% endfor %}
@@ -60,6 +72,6 @@
     </div>
 
     {% block script %}
-     <script src="{% static 'network/index.js' %}"></script>
-    {% endblock %}
+    <script src="{% static 'network/index.js' %}"></script>
+   {% endblock %}
 {% endblock %}

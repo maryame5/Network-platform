@@ -130,16 +130,17 @@ def create_post(request):
 @csrf_exempt
 @login_required
 def edit(request,postId):
-    post=Post.objects.get(id=postId)
-    if request.method == "POST":
+    posts=Post.objects.get(id=postId)
+    if request.method == "PUT":
         try:
             data = json.loads(request.body)  # Load the JSON data
-            
-            content = data.get("content")
-            if not content :
+            contents = data.get("content")
+
+            if not contents :
                 return HttpResponse({"error":"content are required"} ,status=400)
-            post = Post.objects.update( content=content)
-            post.save()
+            posts.content = contents
+            posts.save()
+            return JsonResponse({"message": "post edited successfully."}, status=201)
         except json.JSONDecodeError:
             return  JsonResponse({"error": "Invalid JSON."}, status=400)
         except Exception as e:
@@ -148,9 +149,7 @@ def edit(request,postId):
     return JsonResponse({"message": "post edited successfully."}, status=201)
 
 
-
-
-
+@csrf_exempt
 def profil(request,name):  
      #normal user connect to network
      users= request.user
@@ -201,3 +200,33 @@ def follow_fun(request,following_name)   :
                  return JsonResponse({"message": "You are now following " + following_name})
             
 
+def get_post(request,postId):
+    try:
+        post = Post.objects.get(id=postId)
+        return JsonResponse({
+            'id': post.id,
+            'like':post.like,
+            'content': post.content,
+            'user': post.user.username,  # Assuming you want to send the username
+            'timestamp': post.timestamp.isoformat()  # Format timestamp if needed
+        })
+    except Post.DoesNotExist:
+        return JsonResponse({'error': 'Post not found'}, status=404)
+
+@csrf_exempt
+@login_required
+def up_like(request,postId):
+    posts=Post.objects.get(id=postId)
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)  # Load the JSON data
+            number = data.get("like")
+            posts.like = number
+            posts.save()
+            return JsonResponse({"message": "post liked successfully."}, status=201)
+        except json.JSONDecodeError:
+            return  JsonResponse({"error": "Invalid JSON."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": "error"+str(e)}, status=500)
+        
+    return JsonResponse({"message": "post like successfully."}, status=201)

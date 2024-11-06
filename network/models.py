@@ -13,6 +13,7 @@ class Post(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     like = models.IntegerField(default=0)
     followers = models.ManyToManyField(User, through='follow' , through_fields=('post_fo', 'follower'),related_name='followed_post')
+    liked_by =models.ManyToManyField(User,related_name ="liked_post",blank=True)
     def serialize(self):
         return {
             "id": self.id,

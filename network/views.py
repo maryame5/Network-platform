@@ -216,26 +216,24 @@ def get_post(request,postId):
 @csrf_exempt
 @login_required
 def up_like(request,postId):
-    posts=Post.objects.get(id=postId)
-    user = request.user
-    if request.method == "PUT":
-        try:
-            try:
-                Like.objects.get(user=user, post=posts)
-                posts.like -=1
-                posts.save()
-                Like.objects.get(user=user, post=posts).delete()
-                return JsonResponse({"message": "Unlike post",
-                                     'like':posts.like,})
-            except Like.DoesNotExist:
-                Like.objects.create(user=user, post=posts)
-                posts.like +=1
-                posts.save()
-                return JsonResponse({"message": "Like post",
-                                     'like':posts.like,})
-            
-        except json.JSONDecodeError:
-            return  JsonResponse({"error": "Invalid JSON."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": "error"+str(e)}, status=500)
+    if request.method == "POST":
+        posts=Post.objects.get(id=postId)
+        user = request.user
+        like_list = posts.liked_by.all()
+    
+        if user in like_list:
+            posts.liked_by.remove(user)
+            posts.like = posts.liked_by.count()
+            posts.save()
+            return JsonResponse({"message": "unlike",
+                                 "likes_count": posts.liked_by.count(),
+                                 })
+        else:
+            posts.liked_by.add(user)
+            posts.like =  posts.liked_by.count()
+            posts.save()
+           
+            return JsonResponse({"message": "like",
+                                 "likes_count": posts.liked_by.count(),
+                                 })
         

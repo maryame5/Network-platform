@@ -15,9 +15,9 @@ document.addEventListener("DOMContentLoaded", function() {
         )})
 
         document.querySelectorAll(".like").forEach(likebutton =>{
-            likebutton.addEventListener("click" , function(){
+            likebutton.addEventListener("click" , function(event){
+                event.preventDefault();
                 const postId = this.getAttribute('data-post-id');
-                console.log("6");
                 up_like(postId);
 
         })})
@@ -104,36 +104,30 @@ function edit(postId) {
         }
 
 function up_like(postId){
-        fetch(`/post/${postId}`)
-        .then(response => {
-            console.log("Fetching post data,");
-          return response.json()})
-        .then(post => {
-            console.log("Post data:", post);
-                const likes = post.like; 
                 fetch(`/like/${postId}`, {
-                     method: 'PUT',
+                     method: 'POST',
                      headers: {
                           'Content-Type': 'application/json'},
-                     body: JSON.stringify({
-                           like: likes
-                           }) })
+                      })
                 .then(response =>  {
                      if (!response.ok){
                           throw new Error('Network response was not ok')}
                     return response.json();})
-                .then(uppost => {
-                     console.log(uppost.message, post);
+                .then(data => {
+                     console.log(data.message, data);
                      const postelement =document.querySelector(`#post-${postId}`);
-                     postelement.querySelector(`#like-${postId}`).textContent = uppost.like;
+                     postelement.querySelector(`#like-${postId}`).textContent = data.likes_count;
+                     if (data.message=="like"){
+                        postelement.querySelector(`#like-${postId}`).style.backgroundColor='red';
+                     }
+                     else{
+                        postelement.querySelector(`#like-${postId}`).style.backgroundColor = 'gray';
+                     }
+
                     })
                 .catch(error => {
                       console.error( error)})
-})
-        .catch(error => 
-            console.error("There was a problem with the fetch operation:", error)
-          )
-          
-        }
+}
+        
 
    

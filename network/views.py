@@ -217,16 +217,25 @@ def get_post(request,postId):
 @login_required
 def up_like(request,postId):
     posts=Post.objects.get(id=postId)
+    user = request.user
     if request.method == "PUT":
         try:
-            data = json.loads(request.body)  # Load the JSON data
-            number = data.get("like")
-            posts.like = number
-            posts.save()
-            return JsonResponse({"message": "post liked successfully."}, status=201)
+            try:
+                Like.objects.get(user=user, post=posts)
+                posts.like -=1
+                posts.save()
+                Like.objects.get(user=user, post=posts).delete()
+                return JsonResponse({"message": "Unlike post",
+                                     'like':posts.like,})
+            except Like.DoesNotExist:
+                Like.objects.create(user=user, post=posts)
+                posts.like +=1
+                posts.save()
+                return JsonResponse({"message": "Like post",
+                                     'like':posts.like,})
+            
         except json.JSONDecodeError:
             return  JsonResponse({"error": "Invalid JSON."}, status=400)
         except Exception as e:
             return JsonResponse({"error": "error"+str(e)}, status=500)
         
-    return JsonResponse({"message": "post like successfully."}, status=201)

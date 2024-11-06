@@ -110,8 +110,7 @@ function up_like(postId){
           return response.json()})
         .then(post => {
             console.log("Post data:", post);
-                const current = post.like; 
-                const likes = current + 1;
+                const likes = post.like; 
                 fetch(`/like/${postId}`, {
                      method: 'PUT',
                      headers: {
@@ -123,10 +122,10 @@ function up_like(postId){
                      if (!response.ok){
                           throw new Error('Network response was not ok')}
                     return response.json();})
-                .then(post => {
-                     console.log("poste liked", post);
+                .then(uppost => {
+                     console.log(uppost.message, post);
                      const postelement =document.querySelector(`#post-${postId}`);
-                     postelement.querySelector(`#like-${postId}`).textContent = likes;
+                     postelement.querySelector(`#like-${postId}`).textContent = uppost.like;
                     })
                 .catch(error => {
                       console.error( error)})

@@ -27,7 +27,8 @@
             <a href="{%url 'profil' post.user %}" >{{post.user}} </a>
             <p>{{post.content}}</p>
             <p>{{post.timestamp}}</p>
-            <p>likes :{{post.like}}</p>
+            <p> Like :
+              <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>
             {% if others == userr %}
             <button> edit</button>
             <div id="edit_post"  style="display: none;">

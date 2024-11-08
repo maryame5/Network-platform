@@ -154,10 +154,11 @@ def edit(request,postId):
 def profil(request,name):  
      #normal user connect to network
      users= request.user
-     foll= follow.objects.filter(follower=users)
+     user_name=User.objects.get(username=name)
+     foll= follow.objects.filter(follower=user_name)
      following_users = [f.following for f in foll]
      following_nbr =len(following_users)
-     follower_nbr=len(follow.objects.filter(following=users))
+     follower_nbr=len(follow.objects.filter(following=user_name))
     
      #get the user who's creating this post
      userr = User.objects.get(username=name)
@@ -202,6 +203,27 @@ def follow_fun(request,following_name)   :
     return JsonResponse({"error": "Invalid request method."}, status=405)
             
 
+
+@login_required
+def unfollow_fun(request,following_name)   :
+    if request.method == "POST":
+            #user connected
+            user=request.user
+            following_user = User.objects.get(username=following_name)
+            post_fo= Post.objects.filter(user=following_user).order_by('-id').first()
+            #get the the creator of the post
+                 #create relation between the user and the posts he wanna start following
+            try :
+                follow.objects.get(follower=user, following=following_user).delete()
+            
+            except follow.DoesNotExist:
+
+                message = "you should be following this user first "
+
+                
+            return HttpResponseRedirect(reverse('profil', args=[following_name]))
+    return JsonResponse({"error": "Invalid request method."}, status=405)
+            
 def get_post(request,postId):
     try:
         post = Post.objects.get(id=postId)

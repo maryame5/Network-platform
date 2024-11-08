@@ -10,13 +10,21 @@
       
       </div>
        {% if others != userr %}
-       <div>
-        <form action="{% url 'follow' userr %}" method="POST">
+       <div style="display: flex ; margin: 20px;">
+        <form action="{% url 'follow' userr %}" method="POST" style="margin-right: 50px;">
             {% csrf_token %}
            
             <button type="submit" class="btn btn-outline-danger">follow</button>
             </form>
+            <form action="{% url 'unfollow' userr %}" method="POST">
+              {% csrf_token %}
+             
+              <button type="submit" class="btn btn-outline-danger">Unfollow</button>
+              </form>
        </div>
+       {% if message %}
+    <div class="alert alert-danger">{{ message }}</div>
+      {% endif %}
        {% endif %}
        
     

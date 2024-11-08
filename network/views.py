@@ -182,7 +182,6 @@ def profil(request,name):
                   })
 
 @login_required
-
 def follow_fun(request,following_name)   :
     if request.method == "POST":
             #user connected
@@ -197,7 +196,8 @@ def follow_fun(request,following_name)   :
             except follow.DoesNotExist:
 
                  follow.objects.create(follower=user, following=following_user,post_fo=post_fo)
-                 return JsonResponse({"message": "You are now following " + following_name})
+            return HttpResponseRedirect(reverse('profil', args=[following_name]))
+    return JsonResponse({"error": "Invalid request method."}, status=405)
             
 
 def get_post(request,postId):

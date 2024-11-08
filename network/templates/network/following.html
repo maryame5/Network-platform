@@ -7,16 +7,17 @@
     <div id ="post_user">
         
 
-        <h2>paginator</h2>
+       <br>
         {% for post in page_obj %}
         {# Each "post" is a Post model object. #}
-        <div id="post">
+        <div id="post" class="post">
             <a href="{%url 'profil' post.user %}" >{{post.user}} </a>
             <p>{{post.content}}</p>
             <p>{{post.timestamp}}</p>
             <p>   Like :
               <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>  
         </div>
+        <br>
          {% endfor %}
 
         <nav aria-label="Page navigation example">

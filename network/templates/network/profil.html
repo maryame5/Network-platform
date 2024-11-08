@@ -1,14 +1,14 @@
 {% extends "network/layout.html" %}
 {% load static %}
 {% block body %}
-   <h1>Profil</h1>
+   <h1>Profil : {{user.username}}</h1>
     <div id="profil1">
        <p>{{user.username}}</p>
        <p>Following :{{following_nbr}}</p>
        <p>followers : {{follower_nbr}}</p>
        {% if others != userr %}
        <div>
-        <form action="{% url 'follow' userr %}" method="post">
+        <form action="{% url 'follow' userr %}" method="POST">
             {% csrf_token %}
            
             <button type="submit" class="btn btn-outline-danger">follow</button>
@@ -18,10 +18,10 @@
        
     </div>
     <div id ="post_user">
-        <h2>paginator</h2>
+        <h2>Posts </h2>
         {% for post in page_obj %}
         {# Each "post" is a Post model object. #}
-        <div id="post">
+        <div id="post" class="post">
             <a href="{%url 'profil' post.user %}" >{{post.user}} </a>
             <p>{{post.content}}</p>
             <p>{{post.timestamp}}</p>
@@ -42,6 +42,7 @@
           </div>
             {% endif %}
         </div>
+        <br>
          {% endfor %}
 
         <nav aria-label="Page navigation example">

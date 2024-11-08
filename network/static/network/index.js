@@ -1,13 +1,18 @@
 
 document.addEventListener("DOMContentLoaded", function() {
-    document.querySelector("#create").addEventListener("click" , create());
+    const createButton = document.querySelector("#create");
+    if (createButton) {
+        createButton.addEventListener("click", create());
+    }
+
+  
     document.querySelectorAll(".edit").forEach(editbutton => {
         console.log("1");
         editbutton.addEventListener("click" ,function() {
        
         console.log("2");
         const postId = this.getAttribute('data-post-id');
-        console.log("3");
+        console.log(postId);
         document.querySelector(`#edit_post-${postId}`).style.display = 'block';
         console.log("4");
         document.querySelector("#update").addEventListener("click" , edit(postId));
@@ -81,7 +86,12 @@ function edit(postId) {
                 .then(post => {
                      console.log("poste edited", post);
                      const postelement =document.querySelector(`#post-${postId}`);
-                     postelement.querySelector(`#p-${postId}`).textContent = content;
+                     console.log("postId:", postId);
+                     console.log("postelement:", postelement);
+                     const contentelement =postelement.querySelector(`#p-${postId}`);
+                     console.log("contentelement",contentelement);
+                     contentelement.innerHTML = content;
+                     
                     
                      document.querySelector(`#edit_post-${postId}`).style.display = 'none';
                     })

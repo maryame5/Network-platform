@@ -15,34 +15,39 @@
     
             <div class=" d-md-flex justify-content-md-end btn-lg">
              
-              <input id = "create" type="submit" value="Create Post"  class="btn btn-primary">
+              <input id = "create" type="submit" value="Create Post" class="btn btn-primary d-md-flex justify-content-md-end btn-lg" >
               
             </div>
             
         </form>
     </div>    
-    <div id="page">
+    
       <h2>ALL POSTS</h2>
         {% for post in page_obj %}
         {# Each "post" is a Post model object. #}
         <div id="post-{{post.id}}" class="post ">
           
-            <div class="link-danger" > <b style="font-size: 1.5em; margin-right: 1400px;"><a href="{%url 'profil' post.user %}" >{{post.user}} </a></b></div>
+            <b style="font-size: 1.5em; margin-right: 1400px;"><a href="{%url 'profil' post.user %}" >{{post.user}} </a></b>
             <b> <p>{{post.timestamp}}</p></b>
-            <p id="p-{{post.id}} " style="font-size: 20px;">{{post.content}}</p>
+            <p id="p-{{post.id}}" style="font-size: 20px;">{{post.content}}</p>
            
             <p style="font-size: 18px;">Like :
               <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>
             {% if user == post.user %}
-             <button class="edit" data-post-id="{{post.id}}" >edit</button>
+             <button class="edit btn btn-primary " data-post-id="{{post.id}}" style="font-size: 1.5em ;">Edit</button>
              <div id="edit_post-{{post.id}}" style="display: none;">
               <h2>edit post</h2>
               <form id="form_edit-{{post.id}}" method="post">
-                {% csrf_token %}               
-                  <label for="content">Content:</label>
-                  <textarea id="content-{{post.id}}" name="content" required></textarea>
+                {% csrf_token %}   
+                
+                <div class="input-group">
+                  <span class="input-group-text" for="content">Content : </span>
+                  <textarea class="form-control" aria-label="With textarea" id="content-{{post.id}}" name="content" placeholder="share what you want with your friends" required></textarea>
+                </div>
+                 
+                
                   <br>
-                  <input id ="update" type="submit" value="update" >
+                  <input class=" d-md-flex justify-content-md-end btn-lg"  id ="update" type="submit" value="update" >
               </form>
           </div>
             {% endif %}
@@ -74,7 +79,7 @@
       </nav>
 
     
-    </div>
+   
 
     {% block script %}
      <script src="{% static 'network/index.js' %}"></script>

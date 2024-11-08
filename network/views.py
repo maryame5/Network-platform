@@ -37,11 +37,12 @@ def following(request):
     following_users = [f.following for f in foll] 
      #get the posts of the people they are following
 
-    post=[]
-    for i in following_users:
+    
+    post=Post.objects.filter(user__in=following_users)
        
-        array=Post.objects.filter(user=i)
-        post.extend(array)
+    
+    
+    post = post.order_by("-timestamp").all()
 
     paginator = Paginator(post, 10)
     page_number = request.GET.get('page')
@@ -162,6 +163,7 @@ def profil(request,name):
      userr = User.objects.get(username=name)
      #get tho posts of the one creating
      post = Post.objects.filter(user=userr)
+     post = post.order_by("-timestamp").all()
      paginator = Paginator(post, 10)
      page_number = request.GET.get('page')
      page_obj = paginator.get_page(page_number)

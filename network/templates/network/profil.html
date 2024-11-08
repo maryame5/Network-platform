@@ -1,11 +1,14 @@
 {% extends "network/layout.html" %}
 {% load static %}
 {% block body %}
-   <h1>Profil : {{user.username}}</h1>
-    <div id="profil1">
-       <p>{{user.username}}</p>
-       <p>Following :{{following_nbr}}</p>
-       <p>followers : {{follower_nbr}}</p>
+
+<h1 style="font-style: italic;">Profil : {{userr.username}}</h1>
+    <div id="profil1" style="display: flex; font-size: 29px; font-weight: bold; padding:5px ;color:#52528d">
+      
+       <p style="margin-left:800px ;">Following :{{following_nbr}}</p>
+       <p style="margin-left:400px ;">Followers : {{follower_nbr}}</p>
+      
+      </div>
        {% if others != userr %}
        <div>
         <form action="{% url 'follow' userr %}" method="POST">
@@ -16,28 +19,33 @@
        </div>
        {% endif %}
        
-    </div>
-    <div id ="post_user">
-        <h2>Posts </h2>
+    
+    
+        <h1>Posts </h1>
         {% for post in page_obj %}
         {# Each "post" is a Post model object. #}
-        <div id="post" class="post">
-            <a href="{%url 'profil' post.user %}" >{{post.user}} </a>
-            <p>{{post.content}}</p>
-            <p>{{post.timestamp}}</p>
-            <p> Like :
-              <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>
+              <div id="post-{{post.id}}" class="post ">
+          
+                <b style="font-size: 1.5em; margin-right: 1400px;"><a href="{%url 'profil' post.user %}" >{{post.user}} </a></b>
+                <b> <p>{{post.timestamp}}</p></b>
+                <p id="p-{{post.id}}" style="font-size: 20px;">{{post.content}}</p>
+               
+                <p style="font-size: 18px;">Like :
+                  <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>
             {% if others == userr %}
-            <button> edit</button>
-            <div id="edit_post"  style="display: none;">
+            <button class="edit btn btn-primary " data-post-id="{{post.id}}" style="font-size: 1.5em ;">Edit</button>
+            <div id="edit_post-{{post.id}}"  style="display: none;">
               <h2>edit post</h2>
-              <form class="form_edit" method="post">
+              <form id="form_edit-{{post.id}}" method="post">
                 {% csrf_token %}               
-                  <label for="content">Content:</label>
-                  <textarea id="content" name="content" required></textarea>
+                <div class="input-group">
+                  <span class="input-group-text" for="content">Content : </span>
+                  <textarea class="form-control" aria-label="With textarea" id="content-{{post.id}}" name="content" placeholder="share what you want with your friends" required></textarea>
+                </div>
+                 
+                
                   <br>
-                  <input id ="update" type="submit" value="update" >
-        
+                  <input class=" d-md-flex justify-content-md-end btn-lg"  id ="update" type="submit" value="update" >
               </form>
           </div>
             {% endif %}

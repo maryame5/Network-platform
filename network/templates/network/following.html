@@ -10,14 +10,15 @@
        <br>
         {% for post in page_obj %}
         {# Each "post" is a Post model object. #}
-        <div id="post" class="post">
-            <a href="{%url 'profil' post.user %}" >{{post.user}} </a>
-            <p>{{post.content}}</p>
-            <p>{{post.timestamp}}</p>
-            <p>   Like :
-              <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>  
-        </div>
-        <br>
+        <div id="post-{{post.id}}" class="post ">
+          
+          <b style="font-size: 1.5em; margin-right: 1400px;"><a href="{%url 'profil' post.user %}" >{{post.user}} </a></b>
+          <b> <p>{{post.timestamp}}</p></b>
+          <p id="p-{{post.id}}" style="font-size: 20px;">{{post.content}}</p>
+         
+          <p style="font-size: 18px;">Like :
+            <button id="like-{{post.id}}" class="like" data-post-id="{{post.id}}">{{post.like}}</button></p>
+      </div>
          {% endfor %}
 
         <nav aria-label="Page navigation example">
